@@ -7,7 +7,7 @@ using namespace juce;
 
 // Connector handles adding connections to Connections
 struct Connector : public Component {
-    Connector(Connections *conns) : conns(conns) {
+    Connector(Connections *conns) : _conns(conns) {
         connection_type.addItem("In", 1);
         connection_type.addItem("Out", 2);
         connection_type.addItem("Both", 3);
@@ -18,8 +18,8 @@ struct Connector : public Component {
         addAndMakeVisible(connection_code);
 
         connection_add.setButtonText("Add");
-        connection_add.onClick = [conns, this]() {
-            conns->add_client((ConnectionType) connection_type.getSelectedId(), connection_code.getText());
+        connection_add.onClick = [&, this]() {
+            _conns->add_client((ConnectionType) connection_type.getSelectedId(), connection_code.getText());
         };
         addAndMakeVisible(connection_add);
     }
@@ -48,11 +48,11 @@ struct Connector : public Component {
         fb.performLayout(getLocalBounds());
     }
 
-    Connections *conns;
+    Connections *_conns;
 
     ComboBox connection_type;
     TextEditor connection_code;
     TextButton connection_add;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Connector);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Connector)
 };

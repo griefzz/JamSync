@@ -7,7 +7,7 @@ enum class ConnectionType { Input = 1,
                             Output,
                             Both };
 struct Connection : public Component {
-    Connection(ConnectionType type, const String &code) : type(type), code(code) {
+    Connection(ConnectionType type, const String &code) : _type(type), _code(code) {
         connection_type.addItem("In", 1);
         connection_type.addItem("Out", 2);
         connection_type.addItem("Both", 3);
@@ -49,13 +49,13 @@ struct Connection : public Component {
 
     ListenerList<Listener> listeners;
 
-    ConnectionType type;
-    String code;
+    ConnectionType _type;
+    String _code;
 
     ComboBox connection_type;
     Label connection_code;
     TextButton connection_delete;
     ToggleButton connection_mute;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Connection);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Connection)
 };

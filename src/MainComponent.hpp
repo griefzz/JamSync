@@ -1,6 +1,5 @@
 #pragma once
 #include <JuceHeader.h>
-
 #include "ConnectorComponent.hpp"
 #include "ConnectionsComponent.hpp"
 
@@ -34,7 +33,7 @@ public:
         grid.performLayout(getLocalBounds());
     }
 
-    private:
+private:
     //==============================================================================
     Connector connector;
     Connections connections;
