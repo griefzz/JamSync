@@ -1,24 +1,40 @@
+# Set cmake version
 cmake_minimum_required(VERSION 3.5)
+
+# For simplicity, the name of the project is also the name of the target
+set(PROJECT_NAME "JamSync")
 
 # Reads in our VERSION file and sticks in it CURRENT_VERSION variable
 file(STRINGS VERSION CURRENT_VERSION)
 
-# For simplicity, the name of the project is also the name of the target
-set(PROJECT_NAME "JamSync")
-set(COMPANY_NAME "griefzz")
-
-# Change me! Used for the MacOS bundle identifier (and signing)
-set(BUNDLE_ID "com.griefzz.jamsync")
-
-# Change me! Set the plugin formats you want built
-# Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
-set(FORMATS Standalone AU VST3 AUv3)
-
+# Set basic project details
 project(${PROJECT_NAME}
     VERSION ${CURRENT_VERSION}
     DESCRIPTION "Sync audio between networked clients"
     HOMEPAGE_URL "github.com/griefzz/JamSync"
     LANGUAGES CXX)
+
+# Company name appears in plugin stuff
+set(COMPANY_NAME "griefzz")
+
+# Change me! Used for the MacOS bundle identifier (and signing)
+set(BUNDLE_ID "com.griefzz.jamsync")
+
+# Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
+set(FORMATS Standalone AU VST3 AUv3)
+
+# Boost ASIO Things
+set(BOOST_INCLUDE_LIBRARIES asio)
+set(BOOST_ENABLE_CMAKE ON)
+
+include(FetchContent)
+FetchContent_Declare(
+    Boost
+    GIT_REPOSITORY https://github.com/boostorg/boost.git
+    GIT_PROGRESS TRUE
+    GIT_TAG boost-1.82.0
+)
+FetchContent_MakeAvailable(Boost)
 
 set(CMAKE_CXX_STANDARD 20) # force c++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,12 +53,10 @@ juce_add_plugin(${PROJECT_NAME}
     # On MacOS, plugin is copied to ~/Users/yourname/Library/Audio/Plug-Ins/
     # COPY_PLUGIN_AFTER_BUILD TRUE
 
-    # Change me!
     # A four-character plugin id
     # First character MUST be uppercase for AU formats
-    PLUGIN_MANUFACTURER_CODE sjam
+    PLUGIN_MANUFACTURER_CODE SJam
 
-    # Change me!
     # A unique four-character plugin id
     # Note: this must have at least one upper-case character
     PLUGIN_CODE J001
@@ -54,21 +68,14 @@ juce_add_plugin(${PROJECT_NAME}
     # You might want to use v${MAJOR_VERSION} here once you go to v2...
     PRODUCT_NAME "${PROJECT_NAME}")
 
+
 add_library(SharedCode INTERFACE)
 
-# C++20, please
-# Use cxx_std_23 for C++23 (as of CMake v 3.20)
-target_compile_features(SharedCode INTERFACE cxx_std_20)
-
-# Manually list all .h and .cpp files for the plugin
-# If you are like me, you'll use globs for your sanity.
-# Just ensure you employ CONFIGURE_DEPENDS so the build system picks up changes
-# If you want to appease the CMake gods and avoid globs, manually add files like so:
 # set(SourceFiles Source/PluginEditor.h Source/PluginProcessor.h Source/PluginEditor.cpp Source/PluginProcessor.cpp)
 file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
 target_sources(SharedCode INTERFACE ${SourceFiles})
 
-# This is where you can set preprocessor definitions for JUCE and your plugin
+# Preprocessor definitions for JUCE and plugin
 target_compile_definitions(SharedCode
     INTERFACE
 
@@ -77,7 +84,7 @@ target_compile_definitions(SharedCode
     JUCE_USE_CURL=0 # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
     JUCE_VST3_CAN_REPLACE_VST2=0
 
-    # Uncomment if you are paying for a an Indie/Pro license or releasing under GPLv3
+    # Uncomment if we're paying for a an Indie/Pro license or releasing under GPLv3
     # JUCE_DISPLAY_SPLASH_SCREEN=0
 
     # lets the app known if we're Debug or Release
@@ -94,6 +101,7 @@ target_compile_definitions(SharedCode
 # This allows the JUCE plugin targets and the Tests target to link against it
 target_link_libraries(SharedCode
     INTERFACE
+    Boost::asio
     juce_audio_basics
     juce_audio_utils
     juce_audio_processors
@@ -107,4 +115,5 @@ target_link_libraries(SharedCode
 # Link the JUCE plugin targets our SharedCode target
 target_link_libraries("${PROJECT_NAME}" PRIVATE SharedCode)
 
+# Enable <JuceHeader.h>
 juce_generate_juce_header(${PROJECT_NAME})
