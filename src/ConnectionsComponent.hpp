@@ -27,8 +27,8 @@ struct Connections : public Component, public Connection::Listener {
         fb.performLayout(getLocalBounds());
     }
 
-    void add_client(ConnectionType type, const String &code) {
-        auto client = clients.add(new Connection(type, code));
+    void add_client(const String &code) {
+        auto client = clients.add(new Connection(code));
         client->addListener(this);
         addAndMakeVisible(client);
         resized();

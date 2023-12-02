@@ -3,17 +3,8 @@
 
 using namespace juce;
 
-enum class ConnectionType { Input = 1,
-                            Output,
-                            Both };
 struct Connection : public Component {
-    Connection(ConnectionType type, const String &code) : _type(type), _code(code) {
-        connection_type.addItem("In", 1);
-        connection_type.addItem("Out", 2);
-        connection_type.addItem("Both", 3);
-        connection_type.setSelectedId((int) type);
-        addAndMakeVisible(connection_type);
-
+    Connection(const String &code) {
         connection_code.setText(code, dontSendNotification);
         addAndMakeVisible(connection_code);
 
@@ -31,7 +22,6 @@ struct Connection : public Component {
 
     void resized() override {
         FlexBox fb;
-        fb.items.add(FlexItem(connection_type).withFlex(1));
         fb.items.add(FlexItem(connection_code).withFlex(1));
         fb.items.add(FlexItem(connection_delete).withFlex(1));
         fb.items.add(FlexItem(connection_mute).withFlex(1));
@@ -49,10 +39,6 @@ struct Connection : public Component {
 
     ListenerList<Listener> listeners;
 
-    ConnectionType _type;
-    String _code;
-
-    ComboBox connection_type;
     Label connection_code;
     TextButton connection_delete;
     ToggleButton connection_mute;
