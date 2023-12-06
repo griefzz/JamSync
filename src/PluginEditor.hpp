@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
+#include "PluginProcessor.hpp"
 #include "MainComponent.hpp"
 
 //==============================================================================
@@ -20,7 +20,7 @@ private:
     // access the processor object that created it.
     ServerplugAudioProcessor &audioProcessor;
 
-    Main mainComponent;
+    MainComponent mainComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ServerplugAudioProcessorEditor)
 };

@@ -1,5 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Server.hpp"
+#include "Client.hpp"
 
 class ServerplugAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA
@@ -44,6 +46,8 @@ public:
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
+
+    Server server;
 
 private:
     //==============================================================================

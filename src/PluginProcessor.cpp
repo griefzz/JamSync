@@ -1,5 +1,5 @@
-#include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "PluginProcessor.hpp"
+#include "PluginEditor.hpp"
 
 //==============================================================================
 ServerplugAudioProcessor::ServerplugAudioProcessor()
@@ -14,6 +14,11 @@ ServerplugAudioProcessor::ServerplugAudioProcessor()
       )
 #endif
 {
+    // Begin looking for connections
+    if (!server.beginWaitingForSocket(8888, "0.0.0.0")) {
+        DBG("Unable to start server");
+        jassertfalse;
+    };
 }
 
 ServerplugAudioProcessor::~ServerplugAudioProcessor() {

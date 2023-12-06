@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Client.hpp"
 
 using namespace juce;
 
@@ -7,7 +8,7 @@ enum class ConnectionType { Input = 1,
                             Output,
                             Both };
 struct Connection : public Component {
-    Connection(ConnectionType type, const String &code) : _type(type), _code(code) {
+    Connection(ConnectionType type, const String &code, ClientConnection *conn) : _conn(conn), _type(type), _code(code) {
         connection_type.addItem("In", 1);
         connection_type.addItem("Out", 2);
         connection_type.addItem("Both", 3);
@@ -43,9 +44,13 @@ struct Connection : public Component {
 
         virtual void on_delete(Connection *) = 0;
         virtual void on_mute(Connection *)   = 0;
+        virtual void on_set_type(Connection *) = 0;
     };
 
     void addListener(Listener *newListener) { listeners.add(newListener); }
+
+    std::unique_ptr<ClientConnection> _conn;
+
 
     ListenerList<Listener> listeners;
 

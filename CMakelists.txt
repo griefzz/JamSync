@@ -23,21 +23,6 @@ set(BUNDLE_ID "com.griefzz.jamsync")
 # Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
 set(FORMATS Standalone AU VST3 AUv3)
 
-# Boost ASIO Things
-set(BOOST_INCLUDE_LIBRARIES asio)
-set(BOOST_ENABLE_CMAKE ON)
-
-include(FetchContent)
-Set(FETCHCONTENT_QUIET FALSE)
-FetchContent_Declare(
-    Boost
-    GIT_REPOSITORY https://github.com/boostorg/boost.git
-    GIT_PROGRESS TRUE
-    GIT_TAG boost-1.82.0
-    GIT_SHALLOW 1
-)
-FetchContent_MakeAvailable(Boost)
-
 set(CMAKE_CXX_STANDARD 20) # force c++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # disable compiler extensions
@@ -69,7 +54,6 @@ juce_add_plugin(${PROJECT_NAME}
     # This can be different from PROJECT_NAME and can have spaces!
     # You might want to use v${MAJOR_VERSION} here once you go to v2...
     PRODUCT_NAME "${PROJECT_NAME}")
-
 
 add_library(SharedCode INTERFACE)
 
@@ -103,13 +87,14 @@ target_compile_definitions(SharedCode
 # This allows the JUCE plugin targets and the Tests target to link against it
 target_link_libraries(SharedCode
     INTERFACE
-    Boost::asio
     juce_audio_basics
     juce_audio_utils
     juce_audio_processors
     juce_dsp
     juce_gui_basics
     juce_gui_extra
+    juce_core
+    juce_events
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)

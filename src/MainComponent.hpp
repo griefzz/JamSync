@@ -1,14 +1,15 @@
 #pragma once
 #include <JuceHeader.h>
+#include "PluginProcessor.hpp"
 #include "ConnectorComponent.hpp"
 #include "ConnectionsComponent.hpp"
 
 using namespace juce;
 
-class Main : public Component {
+class MainComponent : public Component {
 public:
     //==============================================================================
-    Main() : connector(&connections) {
+    MainComponent() : connector(&connections) {
         addAndMakeVisible(connector);
         addAndMakeVisible(connections);
 
@@ -38,5 +39,5 @@ private:
     Connector connector;
     Connections connections;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Main)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

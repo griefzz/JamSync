@@ -28,10 +28,16 @@ struct Connections : public Component, public Connection::Listener {
     }
 
     void add_client(ConnectionType type, const String &code) {
-        auto client = clients.add(new Connection(type, code));
-        client->addListener(this);
-        addAndMakeVisible(client);
-        resized();
+        auto conn = std::make_unique<ClientConnection>((int)type, [&](const MemoryBlock &) {});
+        if (conn->connectToSocket(code, 8888, 1000)) {
+            auto client = clients.add(new Connection(type, code, conn.release()));
+            client->addListener(this);
+            addAndMakeVisible(client);
+            resized();
+        } else {
+            DBG("Failed to connect to server");
+            jassertfalse;
+        }
     }
 
     void on_delete(Connection *obj) override {
@@ -40,8 +46,11 @@ struct Connections : public Component, public Connection::Listener {
     }
 
     void on_mute(Connection *obj) override {
-        (void) obj;
-        //obj->connection_mute.getToggleState();
+        obj->_conn->mute(obj->connection_mute.getToggleState());
+    }
+
+    void on_set_type(Connection* obj) override {
+        obj->_conn->set_type(obj->connection_type.getSelectedId());
     }
 
     OwnedArray<Connection> clients;
